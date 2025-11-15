@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>VibeCoder</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- Markdown rendering & Syntax Highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+
+  <script>
+    marked.setOptions({
+      highlight: function(code, lang) {
+        return hljs.highlight(code, {language: lang || 'python'}).value;
+      }
+    });
+  </script>
+</head>
+
+<body>
+  <div class="header">
+    <h1>VibeCoder</h1>
+    <p>Your AI coding companion — Generate or Explain Python code instantly.</p>
+  </div>
+
+  <div class="chat-container">
+    <div id="chat-box" class="chat-box"></div>
+
+    <div class="input-container">
+      <textarea id="message" placeholder="Ask me to generate or explain Python code..."></textarea>
+      <button onclick="send()">Run</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById("chat-box");
+
+    function addMessage(content, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", sender);
+
+      // Render Markdown
+      msg.innerHTML = marked.parse(content);
+
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function send() {
+      const msg = document.getElementById("message").value.trim();
+      if (!msg) return;
+
+      addMessage(msg, "user");
+      document.getElementById("message").value = "";
+
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ message: msg })
+      });
+
+      const data = await res.json();
+      addMessage(data.response, "bot");
+    }
+  </script>
+</body>
+</html>

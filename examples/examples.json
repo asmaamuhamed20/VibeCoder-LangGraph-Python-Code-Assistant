@@ -1,0 +1,10 @@
+[
+  {
+    "description": "Generate Python function to sum list elements",
+    "code": "def sum_list(lst): return sum(lst)"
+  },
+  {
+    "description": "Explain Python list comprehension example",
+    "code": "[x**2 for x in range(5)]"
+  }
+]
